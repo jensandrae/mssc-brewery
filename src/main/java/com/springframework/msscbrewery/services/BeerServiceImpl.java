@@ -4,6 +4,9 @@ import com.springframework.msscbrewery.web.model.BeerDto;
 import org.springframework.stereotype.Service;
 import java.util.UUID;
 
+/**
+ * Created by Jens Andrae on 2020-10-15
+ */
 @Service
 public class BeerServiceImpl implements BeerService {
 
@@ -20,5 +23,10 @@ public class BeerServiceImpl implements BeerService {
         return BeerDto.builder()
                 .id(UUID.randomUUID())
                 .build();
+    }
+
+    @Override
+    public void updateBeer(UUID beerId, BeerDto beerDto) {
+        // ToDo: Implement - Would add a real impl to update beer
     }
 }
