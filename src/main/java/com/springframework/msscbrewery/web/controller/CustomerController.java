@@ -12,17 +12,9 @@ import java.util.UUID;
 /**
  * Created by Jens Andrae on 2020-10-15
  */
-@RequestMapping("/customer/api/v1/")
+@RequestMapping("/api/v1/customer")
 @RestController
 public class CustomerController {
-
-    /**
-     * TODO: Implement...
-     * POST     - CREATE
-     * PUT      - UPDATE
-     * DELETE   - DELETE
-     *
-     */
 
     private final CustomerService customerService;
 
