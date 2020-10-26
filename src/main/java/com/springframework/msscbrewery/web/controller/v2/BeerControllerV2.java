@@ -7,6 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -23,13 +27,13 @@ public class BeerControllerV2 {
         this.beerServiceV2 = beerServiceV2;
     }
 
-    @GetMapping("/{beerId}")
+    @GetMapping("/{beerId}") // GET - a existing resource
     public ResponseEntity<BeerDtoV2> getBeer(@PathVariable("beerId") UUID beerId) {
         return new ResponseEntity<>(beerServiceV2.getBeerById(beerId), HttpStatus.OK);
     }
 
-    @PostMapping // POST - creates a new Resource
-    public ResponseEntity handlePost(@RequestBody BeerDtoV2 beerDtoV2) {
+    @PostMapping // CREATE - a new resource
+    public ResponseEntity handlePost(@Valid @RequestBody BeerDtoV2 beerDtoV2) {
         BeerDtoV2 savedDto = beerServiceV2.saveNewBeer(beerDtoV2);
         HttpHeaders headers = new HttpHeaders();
         // ToDo: Add hostname to url
@@ -37,15 +41,26 @@ public class BeerControllerV2 {
         return new ResponseEntity(headers, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{beerId}")
-    public ResponseEntity handleUpdate(@PathVariable("beerId") UUID beerId,@RequestBody BeerDtoV2 beerDtoV2) {
+    @PutMapping("/{beerId}") // UPDATED - a existing resource
+    public ResponseEntity handleUpdate(@PathVariable("beerId") UUID beerId, @Valid @RequestBody BeerDtoV2 beerDtoV2) {
         beerServiceV2.updateBeer(beerId, beerDtoV2);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-    @DeleteMapping("/{beerId}")
+    @DeleteMapping("/{beerId}") // DELETE - a existing resource
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteBeer(@PathVariable("beerId") UUID beerId){
         beerServiceV2.deleteById(beerId);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class) // HANDLE EXCEPTIONS
+    public ResponseEntity<List> validationErrorHandler(ConstraintViolationException e) {
+        List<String> errors = new ArrayList<>(e.getConstraintViolations().size());
+
+        e.getConstraintViolations().forEach(constraintViolation ->
+                errors.add(constraintViolation.getPropertyPath() + " : " + constraintViolation.getMessage())
+        );
+
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 }
