@@ -37,7 +37,7 @@ public class BeerControllerV2 {
         BeerDtoV2 savedDto = beerServiceV2.saveNewBeer(beerDtoV2);
         HttpHeaders headers = new HttpHeaders();
         // ToDo: Add hostname to url
-        headers.add("Location", "/api/v1/beer" + savedDto.getId().toString());
+        headers.add("Location", "/api/v2/beer" + savedDto.getId().toString());
         return new ResponseEntity(headers, HttpStatus.CREATED);
     }
 
@@ -57,9 +57,9 @@ public class BeerControllerV2 {
     public ResponseEntity<List> validationErrorHandler(ConstraintViolationException e) {
         List<String> errors = new ArrayList<>(e.getConstraintViolations().size());
 
-        e.getConstraintViolations().forEach(constraintViolation ->
-                errors.add(constraintViolation.getPropertyPath() + " : " + constraintViolation.getMessage())
-        );
+        e.getConstraintViolations().forEach(constraintViolation -> errors.add(
+                constraintViolation.getPropertyPath() + " : " + constraintViolation.getMessage()
+        ));
 
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
